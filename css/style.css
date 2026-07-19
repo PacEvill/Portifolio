@@ -57,6 +57,12 @@ body {
     font-size: 15px;
     line-height: 1.4;
     transition: background-color 0.2s, color 0.2s;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+}
+html {
+    overflow-x: hidden;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -75,7 +81,7 @@ img { display: block; max-width: 100%; }
    BANNER
    ═══════════════════════════════════════════════════════════════ */
 .hero__banner {
-    height: 220px;
+    height: clamp(160px, 24vw, 220px);
     background-color: #1a2634;
     /* ↓ Troque pela sua imagem:
        background-image: url('banner.jpg');
@@ -98,11 +104,11 @@ img { display: block; max-width: 100%; }
 
 /* Inner alinhado às mesmas proporções do .layout */
 .stats-bar-inner {
-    max-width: 1260px;
+    max-width: 1500px;
     margin: 0 auto;
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 290px 1fr 290px;
+    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) minmax(240px, 320px);
     align-items: center;
     height: 75px;   /* espaço para as 7 linhas da grade + padding */
 }
@@ -202,11 +208,11 @@ img { display: block; max-width: 100%; }
 .layout {
     position: relative;
     z-index: 2;             /* acima do stats bar */
-    max-width: 1260px;
+    max-width: 1500px;
     margin: 0 auto;
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 290px minmax(0, 1fr) 290px;
+    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr) minmax(240px, 320px);
     align-items: start;
     min-height: 100vh;
 }
@@ -225,12 +231,12 @@ img { display: block; max-width: 100%; }
 
 /* Avatar QUADRADO — maior, vaza sobre o banner */
 .profile-avatar {
-    width: 148px;
-    height: 148px;
+    width: clamp(96px, 18vw, 148px);
+    height: clamp(96px, 18vw, 148px);
     border-radius: 14px;           /* quadrado com cantos suaves */
     border: 4px solid var(--bg);
     background-color: #333;
-    margin-top: -90px;             /* vaza bastante para cima, sobrepondo o banner */
+    margin-top: clamp(-90px, -7vw, -60px);             /* vaza bastante para cima, sobrepondo o banner */
     position: relative;
     z-index: 10;
     box-shadow: 0 4px 24px rgba(0,0,0,0.45);
@@ -409,7 +415,7 @@ img { display: block; max-width: 100%; }
 .mosaic {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 90px);
+    grid-template-rows: repeat(3, clamp(72px, 8vw, 90px));
     gap: 2px;
 }
 .mosaic-item { background-color: var(--bg-alt); transition: background-color 0.2s; }
@@ -420,6 +426,8 @@ img { display: block; max-width: 100%; }
     display: flex;
     justify-content: space-between;
     max-width: 420px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
 }
 .action-btn {
     display: flex;
@@ -495,29 +503,213 @@ img { display: block; max-width: 100%; }
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVO
    ═══════════════════════════════════════════════════════════════ */
-@media (max-width: 1100px) {
-    .layout,
-    .stats-bar-inner {
-        grid-template-columns: 260px 1fr;
+
+/* Laptops / Notebooks */
+@media (max-width: 1280px) {
+    .layout {
+        grid-template-columns: minmax(200px, 280px) minmax(0, 1fr) minmax(220px, 280px);
     }
-    .right-column          { display: none; }
-    .stats-bar-inner > :last-child { grid-column: 2; justify-self: end; }
+    .stats-bar-inner {
+        grid-template-columns: minmax(200px, 280px) minmax(0, 1fr) minmax(220px, 280px);
+    }
 }
 
-@media (max-width: 768px) {
-    .layout,
-    .stats-bar-inner {
-        grid-template-columns: 1fr;
-        padding: 0 12px;
+/* Tablets (mantém a grade de projetos e leva os posts para o drawer) */
+@media (max-width: 1050px) {
+    .layout {
+        grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
     }
-    .left-column {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
+    .stats-bar-inner {
+        grid-template-columns: minmax(180px, 240px) minmax(0, 1fr) auto;
+        gap: 16px;
+    }
+    .right-column { display: none; }
+    .stats-bar-right {
         position: static;
     }
-    .profile-avatar { margin-top: -40px; }
-    .center-column  { border-right: none; }
-    .stats-bar-left { display: none; }
-    .stats-bar-inner { height: auto; padding: 8px 12px; }
-    .contribution-graph { display: none; }
+    .btn-menu { display: flex; }
+    .drawer-projects { display: none !important; }
+    .drawer-posts { display: block !important; }
 }
+
+/* Mobile (empilha tudo) */
+@media (max-width: 768px) {
+    .layout {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    .stats-bar-wrapper {
+        position: static;
+        border-bottom: 1px solid var(--border);
+    }
+    .stats-bar-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        height: auto;
+        gap: 12px; /* evita que os botões grudem na grade */
+    }
+    .stats-bar-left { display: none; }
+    .stats-bar-center {
+        flex: 1;      /* ocupa todo o espaço que puder */
+        min-width: 0; /* essencial para o overflow-x funcionar num flex child */
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 0;
+    }
+    .stats-bar-right {
+        position: static;
+        flex-shrink: 0; /* impede os botões de serem esmagados */
+        gap: 8px;
+    }
+    .contribution-graph {
+        width: max-content; /* permite que a grade cresça alem do limite e role */
+    }
+    
+    .left-column {
+        position: static;
+        width: 100%;
+        border-right: none;
+        padding: 0 16px 20px;
+        padding-top: 18px;
+    }
+    .profile-card {
+        padding-top: 10px;
+    }
+    .profile-avatar {
+        width: clamp(92px, 28vw, 112px);
+        height: clamp(92px, 28vw, 112px);
+        margin-top: 0;
+        border-width: 3px;
+    }
+    .profile-info h1 {
+        font-size: clamp(1.2rem, 5vw, 1.4rem);
+    }
+    
+    .center-column {
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border);
+    }
+    .right-column {
+        display: none;
+    }
+    .timeline__tabs {
+        padding: 0 16px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .timeline__tabs a {
+        min-width: 92px;
+        padding: 14px 10px;
+    }
+    .social-links {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    /* No mobile, esconde projetos da esquerda e mostra no drawer */
+    .left-column .photos-module { display: none; }
+    .drawer-projects { display: block !important; }
+
+    .photos-grid {
+        /* Garante que o mosaico de projetos não bugue em telas super estreitas */
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .mosaic {
+        grid-template-rows: repeat(3, clamp(64px, 24vw, 88px));
+    }
+
+    .tweet-card {
+        padding: 12px 14px;
+    }
+
+    .tweet-content {
+        gap: 10px;
+    }
+
+    .tweet-avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .tweet-context {
+        margin-left: 52px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE DRAWER (MENU HAMBURGER)
+   ═══════════════════════════════════════════════════════════════ */
+.btn-menu { display: none; } /* Escondido no desktop */
+
+@media (max-width: 950px) {
+    .btn-menu {
+        display: flex;
+    }
+}
+
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.drawer-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    transform: translateX(100%);
+    width: 300px;
+    max-width: 85vw;
+    height: 100vh;
+    background-color: var(--bg);
+    border-left: 1px solid var(--border);
+    z-index: 999;
+    padding: 20px;
+    overflow-y: auto;
+    transition: transform 0.3s ease, visibility 0.3s ease;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.3);
+    visibility: hidden; /* Esconde do layout para evitar o bug do Firefox mobile de expandir a tela */
+}
+.mobile-drawer.open {
+    transform: translateX(0);
+    visibility: visible;
+}
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    font-size: 18px;
+    font-weight: 800;
+}
+.btn-close-drawer {
+    background: transparent;
+    border: none;
+    color: var(--text-strong);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-close-drawer:hover { background: var(--hover-overlay); }
+.btn-close-drawer svg { width: 20px; height: 20px; fill: currentColor; }
